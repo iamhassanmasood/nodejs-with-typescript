@@ -1,45 +1,62 @@
 import { Request, Response } from "express";
+import Post from "../../models/post.schema";
 
-const posts = [
-  {
-    id: 1,
-    title:
-      "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
-    body: "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto",
-  },
-  {
-    id: 2,
-    title: "qui est esse",
-    body: "est rerum tempore vitae\nsequi sint nihil reprehenderit dolor beatae ea dolores neque\nfugiat blanditiis voluptate porro vel nihil molestiae ut reiciendis\nqui aperiam non debitis possimus qui neque nisi nulla",
-  },
-  {
-    id: 3,
-    title: "ea molestias quasi exercitationem repellat qui ipsa sit aut",
-    body: "et iusto sed quo iure\nvoluptatem occaecati omnis eligendi aut ad\nvoluptatem doloribus vel accusantium quis pariatur\nmolestiae porro eius odio et labore et velit aut",
-  },
-  {
-    id: 4,
-    title: "eum et est occaecati",
-    body: "ullam et saepe reiciendis voluptatem adipisci\nsit amet autem assumenda provident rerum culpa\nquis hic commodi nesciunt rem tenetur doloremque ipsam iure\nquis sunt voluptatem rerum illo velit",
-  },
-  {
-    id: 5,
-    title: "nesciunt quas odio",
-    body: "repudiandae veniam quaerat sunt sed\nalias aut fugiat sit autem sed est\nvoluptatem omnis possimus esse voluptatibus quis\nest aut tenetur dolor neque",
-  },
-];
-
-export const getAllPosts = (req: Request, res: Response) => {
-  res.status(200).json({ message: "Success", success: true, data: posts });
+export const getAllPosts = async (req: Request, res: Response) => {
+  try {
+    const posts = await Post.find();
+    res.status(200).json({ message: "Success", success: true, data: posts });
+  } catch (error) {
+    res.status(400).json({ success: false });
+  }
 };
-export const getPost = (req: Request, res: Response) => {
-  const id = req.params.id;
-  const selectedPost = posts.filter((post) => post.id === Number(id));
-  if (!selectedPost.length) {
-    res.status(404).json({ message: "No post found", success: false });
-  } else {
+
+export const getPost = async (req: Request, res: Response) => {
+  const _id = req.params.id;
+  try {
+    const requestedPost = await Post.findById(_id);
     res
       .status(200)
-      .json({ message: "Success", success: true, data: selectedPost });
+      .json({ message: "Success", success: true, data: requestedPost });
+  } catch (error) {
+    res.status(400).json({ success: false });
+  }
+};
+
+export const createPost = async (req: Request, res: Response) => {
+  const { title, body } = req.body;
+  try {
+    const post = await Post.create({ title, body });
+    res
+      .status(201)
+      .json({ message: "Post Created Successfuly", success: true, data: post });
+  } catch (error) {
+    res.status(400).json({ success: false });
+  }
+};
+
+export const updatePost = async (req: Request, res: Response) => {
+  const _id = req.params.id;
+  const { title, body } = req.body;
+  try {
+    const updatePost = await Post.findByIdAndUpdate(_id, { title, body });
+    res.status(200).json({
+      message: "Post Updated Successfuly",
+      success: true,
+      data: updatePost,
+    });
+  } catch (error) {
+    res.status(400).json({ success: false });
+  }
+};
+
+export const deletePost = async (req: Request, res: Response) => {
+  const _id = req.params.id;
+  try {
+    await Post.findByIdAndRemove(_id);
+    res.status(200).json({
+      message: "Post Deleted Successfuly",
+    });
+  } catch (error) {
+    res.status(400).json({ success: false });
   }
 };
