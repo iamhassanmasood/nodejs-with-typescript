@@ -30,6 +30,7 @@ export const createPost = async (req: Request, res: Response) => {
       .status(201)
       .json({ message: "Post Created Successfuly", success: true, data: post });
   } catch (error) {
+    console.log(error, "errpr");
     res.status(400).json({ success: false });
   }
 };

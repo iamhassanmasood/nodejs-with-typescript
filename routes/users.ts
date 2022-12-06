@@ -2,7 +2,7 @@ import express from "express";
 import {
   getAllUsers,
   getUser,
-  createUser,
+  userSignUp,
   updateUser,
   deleteUser,
 } from "../controllers/users/users.controller";
@@ -10,7 +10,7 @@ import {
 const userRoutes = express.Router();
 
 userRoutes.get("/", getAllUsers);
-userRoutes.post("/", createUser);
+userRoutes.post("/signup", userSignUp);
 userRoutes.get("/:id", getUser);
 userRoutes.put("/:id", updateUser);
 userRoutes.delete("/:id", deleteUser);
